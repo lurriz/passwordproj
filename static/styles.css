@@ -14,7 +14,7 @@ body {
     font-size: 5rem;
 }
 
-.input {
+#length {
     margin-top: 20px;
     margin-bottom: 20px;
     height: 20px;
@@ -48,4 +48,8 @@ body {
     text-align: center;
     font-size: 1.2rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#output {
+    text-align: center;
 }

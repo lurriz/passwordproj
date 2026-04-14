@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>PassMaker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1 class="header">Generate Password</h1>
-    <input class="input" id="passlenght" type="text" placeholder="Password Length">
+
+    <input type="number" id="length" placeholder="Length (default 16)">
     <button class="btn" id="generate">Generate</button>
+
     <div class="box" id="output"></div>
+
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const generatebtn = document.getElementById("generate");
-        const output = document.getElementById("output");
+        document.addEventListener("DOMContentLoaded", () => {
+            const button = document.getElementById("generate");
+            const output = document.getElementById("output");
+            const lengthInput = document.getElementById("length");
 
-        generatebtn.addEventListener("click", async () => {
-            console.log("clicked");
+            button.addEventListener("click", async () => {
+                const length = lengthInput.value || 16;
 
-            const response = await fetch("/generate");
-            const password = await response.text();
-            output.textContent = password;
+                const response = await fetch(`/generate?length=${length}`);
+                const password = await response.text();
+
+                output.textContent = password;
+            });
         });
-    });
-
-    
-</script>
+    </script>
 </body>
 </html>
