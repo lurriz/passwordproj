@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>PassMaker</title>
+</head>
+<body>
+    <h1 class="header">Generate Password</h1>
+    <input class="input" id="passlenght" type="text" placeholder="Password Length">
+    <button class="btn" id="generate">Generate</button>
+    <div class="box" id="output"></div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const generatebtn = document.getElementById("generate");
+        const output = document.getElementById("output");
+
+        generatebtn.addEventListener("click", async () => {
+            console.log("clicked");
+
+            const response = await fetch("/generate");
+            const password = await response.text();
+            output.textContent = password;
+        });
+    });
+
+    
+</script>
+</body>
+</html>
