@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from passGenerator import make_password
+from pass_generator import make_password
 
 app = Flask(__name__)
 

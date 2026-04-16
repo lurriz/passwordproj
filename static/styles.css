@@ -37,13 +37,18 @@ body {
     transform: scale(1.05);
 }
 
+.btn:active {
+    background-color: #00ff55;
+    transform: scale(0.8);
+}
+
 .box {
     margin-top: 20px;
     padding: 15px;
     min-width: 250px;
     min-height: 40px;
     background-color: #1e1e1e;
-    color: #00ff9d;
+    color: #00ff55;
     border-radius: 10px;
     text-align: center;
     font-size: 1.2rem;
