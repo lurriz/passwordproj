@@ -14,9 +14,15 @@ body {
     font-size: 5rem;
 }
 
+.input-group{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
 .input {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     height: 20px;
     text-align: center;
 }
@@ -43,7 +49,7 @@ body {
 }
 
 .box {
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 15px;
     min-width: 250px;
     min-height: 40px;

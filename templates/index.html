@@ -16,29 +16,32 @@
         
     </div>
     
-    <div>
+    <div class="input-group">
         <input class="input" type="number" id="length" placeholder="Length (default 16)">
         <input class="input" type="text" id="site" placeholder="site">
-        <input class="input" type="text" id="username" placeholder="username">
+        <input class="input" type="text" id="username" placeholder="username">      
+    </div>
+    <div>
+        <input class="box" type="text" id="output" placeholder="password"> 
     </div>
 
-    <div class="box" id="output"></div>
+    <!--<div class="box" id="output"></div>-->
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const button = document.getElementById("generate");
+            const generateBtn = document.getElementById("generate");
             const copyBtn = document.getElementById("copy-clipboard");
             const output = document.getElementById("output");
             const lengthInput = document.getElementById("length");
             const saveBtn = document.getElementById("save-to-DB")
 
-            button.addEventListener("click", async () => {
+            generateBtn.addEventListener("click", async () => {
                 const length = lengthInput.value || 16;
 
                 const response = await fetch(`/generate?length=${length}`);
                 const password = await response.text();
 
-                output.textContent = password;
+                output.value = password;
             });
 
             copyBtn.addEventListener("click", () => {
@@ -60,7 +63,7 @@
             saveBtn.addEventListener("click", async () => {
                 const site = document.getElementById("site").value;
                 const username = document.getElementById("username").value;
-                const password = document.getElementById("output").textContent;
+                const password = document.getElementById("output").value;
 
                   if (!password ||!site ||!username) {
                     alert("Fields are missing");
@@ -78,6 +81,17 @@
                         password: password
                     })
                 });
+                  const msg = document.createElement("div");
+                msg.textContent = "Saved!";
+                msg.style.position = "absolute";
+                msg.style.top = "140px";
+                msg.style.color = "white";
+
+                document.body.appendChild(msg);
+
+                setTimeout(() => {
+                    msg.remove();
+                }, 1000);
               
             });
             
