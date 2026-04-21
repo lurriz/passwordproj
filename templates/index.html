@@ -15,8 +15,12 @@
         <button class="btn" id="save-to-DB">Save to DB</button>
         
     </div>
-    <input type="number" id="length" placeholder="Length (default 16)">
     
+    <div>
+        <input class="input" type="number" id="length" placeholder="Length (default 16)">
+        <input class="input" type="text" id="site" placeholder="site">
+        <input class="input" type="text" id="username" placeholder="username">
+    </div>
 
     <div class="box" id="output"></div>
 
@@ -26,6 +30,7 @@
             const copyBtn = document.getElementById("copy-clipboard");
             const output = document.getElementById("output");
             const lengthInput = document.getElementById("length");
+            const saveBtn = document.getElementById("save-to-DB")
 
             button.addEventListener("click", async () => {
                 const length = lengthInput.value || 16;
@@ -35,6 +40,7 @@
 
                 output.textContent = password;
             });
+
             copyBtn.addEventListener("click", () => {
                 navigator.clipboard.writeText(output.textContent);
 
@@ -50,6 +56,32 @@
                     msg.remove();
                 }, 1000);
             }); 
+
+            saveBtn.addEventListener("click", async () => {
+                const site = document.getElementById("site").value;
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("output").textContent;
+
+                  if (!password ||!site ||!username) {
+                    alert("Fields are missing");
+                    return;
+                }
+
+                const response = await fetch("/store", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        site: site,
+                        username: username,
+                        password: password
+                    })
+                });
+              
+            });
+            
+            
         });
     </script>
 </body>

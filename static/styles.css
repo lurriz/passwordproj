@@ -14,7 +14,7 @@ body {
     font-size: 5rem;
 }
 
-#length {
+.input {
     margin-top: 20px;
     margin-bottom: 20px;
     height: 20px;

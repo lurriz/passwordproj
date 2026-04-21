@@ -29,4 +29,3 @@ def store_entry(site, username, password):
     conn.close
 
 init_db()
-store_entry("gmail", "lars", "test123")
