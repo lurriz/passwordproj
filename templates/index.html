@@ -22,7 +22,7 @@
     </div>
     
     <div class="input-group">
-        <input class="input" type="number" id="length" placeholder="Length (default 16)">
+        <input class="input" type="text" id="length" placeholder="Length (default 16)">
         <input class="input" type="text" id="site" placeholder="site">
         <input class="input" type="text" id="username" placeholder="username">      
     </div>
@@ -50,13 +50,30 @@
             });
 
             copyBtn.addEventListener("click", () => {
-                navigator.clipboard.writeText(output.textContent);
+                const password = output.value
+
+                    if(!password.trim()){
+                    const msg = document.createElement("div");
+                    msg.textContent = "Password is empty!";
+                    msg.style.position = "absolute";
+                    msg.style.top = "145px";
+                    msg.style.color = "red";
+
+                    document.body.appendChild(msg);
+
+                    setTimeout(() => {
+                        msg.remove();
+                    }, 1000);
+                    return;
+                 }
+
+                navigator.clipboard.writeText(password);
 
                 const msg = document.createElement("div");
                 msg.textContent = "Copied!";
                 msg.style.position = "absolute";
-                msg.style.top = "140px";
-                msg.style.color = "white";
+                msg.style.top = "145px";
+                msg.style.color = "green";
 
                 document.body.appendChild(msg);
 

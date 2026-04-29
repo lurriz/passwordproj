@@ -13,19 +13,63 @@
         <a href="/">Home</a>
         <a href="/vault">Vault</a>
     </nav>
-
-    <div class="button-group">
-        <button class="btn" id="generate">Generate</button>
-        <button class="btn" id="copy-clipboard">Copy</button>
-        <button class="btn" id="save-to-DB">Save to DB</button>
-        
-    </div>
     
-    <div class="input-group">
-        <input class="input" type="number" id="length" placeholder="Length (default 16)">
+    <div class="input-group-vault">
         <input class="input" type="text" id="site" placeholder="site">
-        <input class="input" type="text" id="username" placeholder="username">      
+        <input class="input" type="text" id="username" placeholder="username">
+        <button class="btn" id="search">search</button>       
     </div>
 
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Site</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody id="vault-data"></tbody>
+        </table>
+    </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loadBtn = document.getElementById("search");
+            const container = document.getElementById("vault-data");
+
+            loadBtn.addEventListener("click", async () => {
+                const response = await fetch("/get_entries");
+                const data = await response.json();
+
+            container.innerHTML = ""; // clear ONLY rows
+
+                data.forEach(entry => {
+                    const row = document.createElement("tr");
+
+                    const id = document.createElement("td");
+                    id.textContent = entry.id;
+
+                    const site = document.createElement("td");
+                    site.textContent = entry.site;
+
+                    const user = document.createElement("td");
+                    user.textContent = entry.username;
+
+                    const pass = document.createElement("td");
+                    pass.textContent = entry.password;
+
+                    row.appendChild(id);
+                    row.appendChild(site);
+                    row.appendChild(user);
+                    row.appendChild(pass);
+
+                    container.appendChild(row);
+                });
+            });
+         });
+    </script>
 </body>
 </html>

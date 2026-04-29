@@ -37,4 +37,24 @@ def store_entry(site, username, password):
     conn.commit()
     conn.close()
 
+def get_entries():
+    conn = sqlite3.connect("vault.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, site, username, password FROM vault")
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    entries = []
+    for id, site, username, encrypted in rows:
+            entries.append({
+                "id": id,
+                "site": site,
+                "username": username,
+                "password": encrypted.decode()  # convert bytes → string
+            })
+
+    return entries
+
 init_db()

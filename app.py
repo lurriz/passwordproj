@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from pass_generator import make_password
-from db import store_entry
+from db import store_entry, get_entries
+
 
 app = Flask(__name__)
 
@@ -25,6 +26,10 @@ def store():
 
     return {"message": "Stored successfully"}
 
+@app.route("/get_entries")
+def get_entries_route():
+    entries = get_entries()
+    return jsonify(entries)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

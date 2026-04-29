@@ -1,11 +1,12 @@
 body {
-    margin: 0;
+    margin-left: 100px;
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     background: linear-gradient(135deg, #2c2c2c, #4a4a4a);
     font-family: Consolas, monospace;
+    overflow: hidden;
 }
 
 .header {
@@ -18,7 +19,7 @@ body {
   position: fixed;
   left: 0;
   top: 0;
-  width: 200px;
+  width: 150px;
   height: 100%;
   background: linear-gradient(135deg, #222222, #2b2a2a);
   display: flex;
@@ -42,12 +43,20 @@ body {
     margin-top: 10px;
 }
 
+.input-group-vault{
+    display: block;
+    margin-top: 10px;
+}
+
+
 .input {
     margin-top: 5px;
     margin-bottom: 5px;
-    height: 20px;
+    height: 22px;
     text-align: center;
+    border-radius: 8px;
 }
+
 
 .btn {
     padding: 12px 24px;
@@ -58,6 +67,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s;
+    
 }
 
 .btn:hover {
@@ -85,4 +95,45 @@ body {
 
 #output {
     text-align: center;
+}
+.table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 80%;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background-color: #312e2e;
+    color: white;
+}
+
+th,
+td {
+    padding: 12px;
+    border-top: 1px solid #444;
+    border-left: 1px solid #444;
+    border-right: 1px solid #444;
+    text-align: center;
+    word-break: break-all;
+}
+
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 60px;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 160px;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    width: 180px;
 }
