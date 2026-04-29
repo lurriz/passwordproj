@@ -8,6 +8,10 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
+@app.route("/vault")
+def vault():
+    return render_template("vault.html")
+
 @app.route("/generate")
 def generate():
     length = request.args.get("length", default=16, type=int)
