@@ -31,5 +31,6 @@ def get_entries_route():
     entries = get_entries()
     return jsonify(entries)
 
+
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

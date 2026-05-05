@@ -41,19 +41,23 @@ def get_entries():
     conn = sqlite3.connect("vault.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, site, username, password FROM vault")
+    cursor.execute("""
+        SELECT id, site, username
+        FROM vault
+    """)
+
     rows = cursor.fetchall()
 
     conn.close()
 
     entries = []
-    for id, site, username, encrypted in rows:
-            entries.append({
-                "id": id,
-                "site": site,
-                "username": username,
-                "password": encrypted.decode()  # convert bytes → string
-            })
+
+    for id, site, username in rows:
+        entries.append({
+            "id": id,
+            "site": site,
+            "username": username
+        })
 
     return entries
 
