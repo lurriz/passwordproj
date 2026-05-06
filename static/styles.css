@@ -146,3 +146,57 @@ th:nth-child(3),
 td:nth-child(3) {
     width: 60px;
 }
+
+.vault-row {
+    cursor: pointer;
+}
+
+.vault-row:hover {
+    background-color: #3a3a3a;
+}
+
+.popup.hidden {
+    display: none;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px;
+    height: 100vh;
+    background-color: #1e1e1e;
+    color: white;
+    padding: 24px;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+}
+
+.side-panel.hidden {
+    transform: translateX(100%);
+}
+
+.popup-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #6c6c6c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.side-message {
+    margin-top: 12px;
+    min-height: 20px;
+    color: #00ff55;
+    font-size: 0.95rem;
+}
+
+.logout-link {
+    margin-top: auto;
+    margin-bottom: 40px;
+}

@@ -1,19 +1,23 @@
 import sqlite3
 from cryptography.fernet import Fernet
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR.parent / "vault.db"
 
 key = b"gVcaRPHaWFAcdh81bF-Ly1jTnROJ5XwQ-uNe1u0m3OQ="
 fernet = Fernet(key)
 
 def init_db():
-    conn = sqlite3.connect("vault.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS vault (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   site TEXT NOT NULL,
-                   username TEXT NOT NULL,
-                   password BLOB NOT NULL
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            site TEXT NOT NULL,
+            username TEXT NOT NULL,
+            password BLOB NOT NULL
         )
     """)
 
@@ -26,7 +30,7 @@ def encrypt_password(password):
 def store_entry(site, username, password):
     encrypted = encrypt_password(password)
 
-    conn = sqlite3.connect("vault.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -37,14 +41,16 @@ def store_entry(site, username, password):
     conn.commit()
     conn.close()
 
-def get_entries():
-    conn = sqlite3.connect("vault.db")
+def get_entries(site="", username=""):
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT id, site, username
         FROM vault
-    """)
+        WHERE site LIKE ?
+        AND username LIKE ?
+    """, (f"%{site}%", f"%{username}%"))
 
     rows = cursor.fetchall()
 
@@ -58,7 +64,34 @@ def get_entries():
             "site": site,
             "username": username
         })
-
+    
     return entries
 
-init_db()
+def decrypt_password(encrypted):
+    return fernet.decrypt(encrypted).decode()
+
+def get_entry_by_id(entry_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, site, username, password
+        FROM vault
+        WHERE id = ?
+    """, (entry_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row is None:
+        return None
+
+    id, site, username, encrypted = row
+
+    return {
+        "id": id,
+        "site": site,
+        "username": username,
+        "password": decrypt_password(encrypted)
+    }
+    

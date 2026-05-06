@@ -12,12 +12,12 @@
     <nav class="sidebar">
         <a href="/">Home</a>
         <a href="/vault">Vault</a>
+        <a href="/logout" class="logout-link">Logout</a>
     </nav>
     
     <div class="input-group-vault">
         <input class="input" type="text" id="site" placeholder="site">
-        <input class="input" type="text" id="username" placeholder="username">
-        <button class="btn" id="search">search</button>       
+        <input class="input" type="text" id="username" placeholder="username">     
     </div>
 
 
@@ -34,28 +34,137 @@
         </table>
     </div>
 
+    <div id="entry-popup" class="side-panel hidden">
+        <button id="close-popup" class="popup-close">X</button>
+
+        <h2>Entry Details</h2>
+
+        <p id="popup-id"></p>
+        <p id="popup-site"></p>
+        <p id="popup-username"></p>
+        <p id="popup-password"></p>
+        <button class="btn" id="reveal-password">Reveal password</button>
+        <button class="btn" id="copy-password">Copy password</button>
+        <p id="side-message" class="side-message"></p>
+    </div>
+        
     <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const response = await fetch("/get_entries");
-            const data = await response.json();
-
+        document.addEventListener("DOMContentLoaded", () => {
+            const siteInput = document.getElementById("site");
+            const usernameInput = document.getElementById("username");
             const container = document.getElementById("vault-data");
-            container.innerHTML = "";
+            const popup = document.getElementById("entry-popup");
+            const closePopup = document.getElementById("close-popup");
+            const copyButton = document.getElementById("copy-password");
+            const sideMessage = document.getElementById("side-message");
+            let selectedPassword = "";
+            const revealPasswordBtn = document.getElementById("reveal-password");
+            let searchTimeout;
 
-            data.forEach(entry => {
-                const row = document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>${entry.id}</td>
-                    <td>${entry.site}</td>
-                    <td>${entry.username}</td>
-                `;
-
-                container.appendChild(row);
+            closePopup.addEventListener("click", () => {
+                popup.classList.add("hidden");
             });
 
-            
+            document.addEventListener("click", (e) => {
+                const clickedInsidePanel = popup.contains(e.target);
+                const clickedRow = e.target.closest(".vault-row");
 
+                if (!popup.classList.contains("hidden") && !clickedInsidePanel && !clickedRow) {
+                    popup.classList.add("hidden");
+                }
+            });
+
+
+            async function loadEntries(site = "", username = "") {
+                const response = await fetch(`/get_entries?site=${site}&username=${username}`);
+                const data = await response.json();
+
+                container.innerHTML = "";
+
+                data.forEach(entry => {
+                    const row = document.createElement("tr");
+
+                    row.classList.add("vault-row");
+
+                    row.dataset.id = entry.id;
+                    row.dataset.site = entry.site;
+                    row.dataset.username = entry.username;
+
+                    row.innerHTML = `
+                        <td>${entry.id}</td>
+                        <td>${entry.site}</td>
+                        <td>${entry.username}</td>
+                    `;
+
+                    container.appendChild(row);
+                });
+            }
+
+            loadEntries();
+
+            function debounceSearch() {
+                clearTimeout(searchTimeout);
+
+                searchTimeout = setTimeout(() => {
+                    loadEntries(siteInput.value, usernameInput.value);
+                }, 300);
+            }
+
+            siteInput.addEventListener("input", debounceSearch);
+            usernameInput.addEventListener("input", debounceSearch);
+
+            container.addEventListener("click", async (e) => {
+                const row = e.target.closest(".vault-row");
+
+                if (!row) {
+                    return;
+                }
+
+                const response = await fetch(`/get_entry/${row.dataset.id}`);
+                const entry = await response.json();
+
+                selectedPassword = entry.password;
+
+                document.getElementById("popup-id").textContent = `ID: ${entry.id}`;
+                document.getElementById("popup-site").textContent = `Site: ${entry.site}`;
+                document.getElementById("popup-username").textContent = `Username: ${entry.username}`;
+                document.getElementById("popup-password").textContent = "Password: Hidden";
+
+                revealPasswordBtn.textContent = "Reveal password";
+
+                popup.classList.remove("hidden");
+            });
+
+            revealPasswordBtn.addEventListener("click", () => {
+                const passwordText = document.getElementById("popup-password");
+
+                if (passwordText.textContent === "Password: Hidden") {
+                    passwordText.textContent = `Password: ${selectedPassword}`;
+                    revealPasswordBtn.textContent = "Hide password";
+                } else {
+                    passwordText.textContent = "Password: Hidden";
+                    revealPasswordBtn.textContent = "Reveal password";
+                }
+            });
+
+            copyButton.addEventListener("click", () => {
+                if (!selectedPassword.trim()) {
+                    sideMessage.textContent = "No password selected";
+                    sideMessage.style.color = "red";
+                    return;
+                }
+                
+                navigator.clipboard.writeText(selectedPassword);
+
+                sideMessage.textContent = "Password copied!";
+                sideMessage.style.color = "#00ff55";
+
+                setTimeout(() => {
+                    sideMessage.textContent = "";
+                }, 1000);
+            });
+
+          
         });
     </script>
 </body>
