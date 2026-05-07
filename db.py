@@ -95,3 +95,17 @@ def get_entry_by_id(entry_id):
         "password": decrypt_password(encrypted)
     }
     
+def update_entry(entry_id, site, username, password):
+    encrypted = encrypt_password(password)
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE vault
+        SET site = ?, username = ?, password = ?
+        WHERE id = ?
+    """, (site, username, encrypted, entry_id))
+
+    conn.commit()
+    conn.close()

@@ -34,18 +34,33 @@
         </table>
     </div>
 
-    <div id="entry-popup" class="side-panel hidden">
-        <button id="close-popup" class="popup-close">X</button>
+    <div id="entry-side-panel" class="side-panel hidden">
+        <button id="close-side-panel" class="side-panel-close">X</button>
 
         <h2>Entry Details</h2>
 
-        <p id="popup-id"></p>
-        <p id="popup-site"></p>
-        <p id="popup-username"></p>
-        <p id="popup-password"></p>
+        <p id="entry-id"></p>
+        <p id="entry-site"></p>
+        <p id="entry-username"></p>
+        <p id="entry-password"></p>
         <button class="btn" id="reveal-password">Reveal password</button>
         <button class="btn" id="copy-password">Copy password</button>
+        <button class="btn" id="edit-entry">Edit</button>
         <p id="side-message" class="side-message"></p>
+    </div>
+
+    <div id="edit-overlay" class="edit-overlay hidden"></div>
+
+    <div id="edit-popup" class="edit-popup hidden">
+        <button id="close-edit-popup" class="side-panel-close">X</button>
+
+        <p id="edit-entry-id"></p>
+
+        <input class="input" type="text" id="site-edit" value="">
+        <input class="input" type="text" id="username-edit" value="">
+        <input class="input" type="text" id="password-edit" value="">
+
+        <button class="btn" id="save-entry-change">Save</button>
     </div>
         
     <script>
@@ -53,30 +68,49 @@
             const siteInput = document.getElementById("site");
             const usernameInput = document.getElementById("username");
             const container = document.getElementById("vault-data");
-            const popup = document.getElementById("entry-popup");
-            const closePopup = document.getElementById("close-popup");
+            const sidePanel = document.getElementById("entry-side-panel");
+            const closeSidePanel = document.getElementById("close-side-panel");
             const copyButton = document.getElementById("copy-password");
             const sideMessage = document.getElementById("side-message");
-            let selectedPassword = "";
             const revealPasswordBtn = document.getElementById("reveal-password");
-            let searchTimeout;
+            const editEntryBtn = document.getElementById("edit-entry");
+            const editPopup = document.getElementById("edit-popup");
+            const closeEditPopup = document.getElementById("close-edit-popup");
+            const editOverlay = document.getElementById("edit-overlay");
+            const saveEntryChangeBtn = document.getElementById("save-entry-change");
 
-            closePopup.addEventListener("click", () => {
-                popup.classList.add("hidden");
+            let selectedPassword = "";
+            let searchTimeout;
+            let selectedEntryId = null;
+
+            closeSidePanel.addEventListener("click", () => {
+                sidePanel.classList.add("hidden");
             });
 
             document.addEventListener("click", (e) => {
-                const clickedInsidePanel = popup.contains(e.target);
-                const clickedRow = e.target.closest(".vault-row");
+                const editPopupOpen = !editPopup.classList.contains("hidden");
 
-                if (!popup.classList.contains("hidden") && !clickedInsidePanel && !clickedRow) {
-                    popup.classList.add("hidden");
-                }
+                    if (editPopupOpen) {
+                        return;
+                    }
+
+                    const clickedInsidePanel = sidePanel.contains(e.target);
+                    const clickedRow = e.target.closest(".vault-row");
+
+                    if (
+                        !sidePanel.classList.contains("hidden") &&
+                        !clickedInsidePanel &&
+                        !clickedRow
+                    ) {
+                        sidePanel.classList.add("hidden");
+                    }
             });
 
 
             async function loadEntries(site = "", username = "") {
-                const response = await fetch(`/get_entries?site=${site}&username=${username}`);
+                const response = await fetch(
+                    `/get_entries?site=${encodeURIComponent(site)}&username=${encodeURIComponent(username)}`
+                );
                 const data = await response.json();
 
                 container.innerHTML = "";
@@ -124,19 +158,21 @@
                 const entry = await response.json();
 
                 selectedPassword = entry.password;
+                selectedEntryId = entry.id;
 
-                document.getElementById("popup-id").textContent = `ID: ${entry.id}`;
-                document.getElementById("popup-site").textContent = `Site: ${entry.site}`;
-                document.getElementById("popup-username").textContent = `Username: ${entry.username}`;
-                document.getElementById("popup-password").textContent = "Password: Hidden";
+                document.getElementById("entry-id").textContent = `ID: ${entry.id}`;
+                document.getElementById("entry-site").textContent = `Site: ${entry.site}`;
+                document.getElementById("entry-username").textContent = `Username: ${entry.username}`;
+                document.getElementById("entry-password").textContent = "Password: Hidden";
 
                 revealPasswordBtn.textContent = "Reveal password";
+                sideMessage.textContent = "";
 
-                popup.classList.remove("hidden");
+                sidePanel.classList.remove("hidden");
             });
 
             revealPasswordBtn.addEventListener("click", () => {
-                const passwordText = document.getElementById("popup-password");
+                const passwordText = document.getElementById("entry-password");
 
                 if (passwordText.textContent === "Password: Hidden") {
                     passwordText.textContent = `Password: ${selectedPassword}`;
@@ -160,11 +196,70 @@
                 sideMessage.style.color = "#00ff55";
 
                 setTimeout(() => {
-                    sideMessage.textContent = "";
+
                 }, 1000);
             });
 
-          
+            editEntryBtn.addEventListener("click", () => {
+                document.getElementById("edit-entry-id").textContent =
+                    document.getElementById("entry-id").textContent;
+
+                document.getElementById("site-edit").value =
+                    document.getElementById("entry-site").textContent.replace("Site: ", "");
+
+                document.getElementById("username-edit").value =
+                    document.getElementById("entry-username").textContent.replace("Username: ", "");
+
+                document.getElementById("password-edit").value = selectedPassword;
+
+                editPopup.classList.remove("hidden");
+                editOverlay.classList.remove("hidden");
+            });
+
+           closeEditPopup.addEventListener("click", (e) => {
+                e.stopPropagation();
+
+                editPopup.classList.add("hidden");
+                editOverlay.classList.add("hidden");
+            });
+
+           editOverlay.addEventListener("click", (e) => {
+                e.stopPropagation();
+
+                editPopup.classList.add("hidden");
+                editOverlay.classList.add("hidden");
+            });
+
+            saveEntryChangeBtn.addEventListener("click", async () => {
+                const site = document.getElementById("site-edit").value;
+                const username = document.getElementById("username-edit").value;
+                const password = document.getElementById("password-edit").value;
+
+                if (!site.trim() || !username.trim() || !password.trim()) {
+                    alert("All fields are required");
+                    return;
+                }
+
+                await fetch(`/update_entry/${selectedEntryId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        site: site,
+                        username: username,
+                        password: password
+                    })
+                });
+
+                editPopup.classList.add("hidden");
+                editOverlay.classList.add("hidden");
+
+                sidePanel.classList.add("hidden");
+
+                loadEntries(siteInput.value, usernameInput.value);
+            });
+            
         });
     </script>
 </body>

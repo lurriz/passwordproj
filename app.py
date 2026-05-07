@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, session
 from pass_generator import make_password
-from db import store_entry, get_entries, get_entry_by_id, init_db
+from db import init_db, store_entry, get_entries, get_entry_by_id, update_entry
 import bcrypt
 import secrets
 
@@ -88,6 +88,22 @@ def get_entry_route(entry_id):
         return {"error": "Entry not found"}, 404
 
     return jsonify(entry)
+
+@app.route("/update_entry/<int:entry_id>", methods=["POST"])
+def update_entry_route(entry_id):
+    if not session.get("logged_in"):
+        return {"error": "Unauthorized"}, 401
+
+    data = request.get_json()
+
+    update_entry(
+        entry_id,
+        data["site"],
+        data["username"],
+        data["password"]
+    )
+
+    return {"message": "Entry updated"}
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
