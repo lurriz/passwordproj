@@ -87,6 +87,21 @@
                 sidePanel.classList.add("hidden");
             });
 
+            async function refreshSidePanel(entryId) {
+                const response = await fetch(`/get_entry/${entryId}`);
+                const entry = await response.json();
+
+                selectedPassword = entry.password;
+
+                document.getElementById("entry-id").textContent = `ID: ${entry.id}`;
+                document.getElementById("entry-site").textContent = `Site: ${entry.site}`;
+                document.getElementById("entry-username").textContent = `Username: ${entry.username}`;
+                document.getElementById("entry-password").textContent = "Password: Hidden";
+
+                revealPasswordBtn.textContent = "Reveal password";
+                sideMessage.textContent = "";
+}
+
             document.addEventListener("click", (e) => {
                 const editPopupOpen = !editPopup.classList.contains("hidden");
 
@@ -245,21 +260,16 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({
-                        site: site,
-                        username: username,
-                        password: password
-                    })
+                    body: JSON.stringify({ site, username, password })
                 });
 
                 editPopup.classList.add("hidden");
                 editOverlay.classList.add("hidden");
 
-                sidePanel.classList.add("hidden");
-
-                loadEntries(siteInput.value, usernameInput.value);
+                await refreshSidePanel(selectedEntryId);
+                await loadEntries(siteInput.value, usernameInput.value);
             });
-            
+                        
         });
     </script>
 </body>
