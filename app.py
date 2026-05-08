@@ -47,6 +47,13 @@ def vault():
 
     return render_template("vault.html")
 
+@app.route("/settings")
+def settings():
+    if not session.get("logged_in"):
+        return redirect("/login")
+
+    return render_template("settings.html")
+
 @app.route("/generate")
 def generate():
     if not session.get("logged_in"):
