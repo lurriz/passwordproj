@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("entry-username").textContent = `Username: ${entry.username}`;
                 document.getElementById("entry-password").textContent = "Password: Hidden";
 
-                revealPasswordBtn.textContent = "Reveal password";
+                revealPasswordBtn.textContent = "Show password";
                 sideMessage.textContent = "";
 
                 sidePanel.classList.remove("hidden");
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     revealPasswordBtn.textContent = "Hide password";
                 } else {
                     passwordText.textContent = "Password: Hidden";
-                    revealPasswordBtn.textContent = "Reveal password";
+                    revealPasswordBtn.textContent = "Show password";
                 }
             });
 
