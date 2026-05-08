@@ -4,8 +4,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR.parent / "vault.db"
+KEY_PATH = BASE_DIR.parent / "key.txt"
 
-key = b"gVcaRPHaWFAcdh81bF-Ly1jTnROJ5XwQ-uNe1u0m3OQ="
+with open(KEY_PATH, "rb") as key_file:
+    key = key_file.read().strip()
+
 fernet = Fernet(key)
 
 def init_db():
@@ -106,6 +109,19 @@ def update_entry(entry_id, site, username, password):
         SET site = ?, username = ?, password = ?
         WHERE id = ?
     """, (site, username, encrypted, entry_id))
+
+    conn.commit()
+    conn.close()
+
+def delete_entry(entry_id):
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM vault
+        WHERE id = ?
+    """,(entry_id,))
 
     conn.commit()
     conn.close()

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, session
 from pass_generator import make_password
-from db import init_db, store_entry, get_entries, get_entry_by_id, update_entry
+from db import init_db, store_entry, get_entries, get_entry_by_id, update_entry, delete_entry
 import bcrypt
 import secrets
 
@@ -104,6 +104,15 @@ def update_entry_route(entry_id):
     )
 
     return {"message": "Entry updated"}
+
+@app.route("/delete_entry/<int:entry_id>", methods=["POST"])
+def delete_entry_route(entry_id):
+    if not session.get("logged_in"):
+        return {"error": "Unauthorized"}, 401
+
+    delete_entry(entry_id)
+
+    return {"message": "Entry deleted"}
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

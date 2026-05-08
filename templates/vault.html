@@ -16,10 +16,9 @@
     </nav>
     
     <div class="input-group-vault">
-        <input class="input" type="text" id="site" placeholder="site">
-        <input class="input" type="text" id="username" placeholder="username">     
+        <input class="input" type="text" id="site" placeholder="site" autocomplete="off">
+        <input class="input" type="text" id="username" placeholder="username" autocomplete="username">     
     </div>
-
 
     <div class="table-wrapper">
         <table>
@@ -46,6 +45,7 @@
         <button class="btn" id="reveal-password">Reveal password</button>
         <button class="btn" id="copy-password">Copy password</button>
         <button class="btn" id="edit-entry">Edit</button>
+        <button class="btn" id="delete-entry">delete</button>
         <p id="side-message" class="side-message"></p>
     </div>
 
@@ -61,6 +61,19 @@
         <input class="input" type="text" id="password-edit" value="">
 
         <button class="btn" id="save-entry-change">Save</button>
+    </div>
+
+       <div id="delete-popup" class="delete-popup hidden">
+        <button id="close-delete-popup" class="delete-popup-close">X</button>
+
+        <h2>Are you sure you want to delete this entry?</h2>
+
+        <p id="delete-entry-id"></p>
+        <p id="delete-entry-site"></p>
+        <p id="delete-entry-username"></p>
+        <p id="delete-entry-password"></p>
+
+        <button class="btn" id="confirm-delete-entry">Yes</button>
     </div>
         
     <script>
@@ -78,6 +91,14 @@
             const closeEditPopup = document.getElementById("close-edit-popup");
             const editOverlay = document.getElementById("edit-overlay");
             const saveEntryChangeBtn = document.getElementById("save-entry-change");
+            const deletePopup = document.getElementById("delete-popup");
+            const deleteEntryBtn = document.getElementById("delete-entry");
+            const closeDeletePopup = document.getElementById("close-delete-popup");
+            const confirmDeleteEntryBtn = document.getElementById("confirm-delete-entry");
+            const deleteEntryId = document.getElementById("delete-entry-id");
+            const deleteEntrySite = document.getElementById("delete-entry-site");
+            const deleteEntryUsername = document.getElementById("delete-entry-username");
+            const deleteEntryPassword = document.getElementById("delete-entry-password");
 
             let selectedPassword = "";
             let searchTimeout;
@@ -104,10 +125,11 @@
 
             document.addEventListener("click", (e) => {
                 const editPopupOpen = !editPopup.classList.contains("hidden");
+                const deletePopupOpen = !deletePopup.classList.contains("hidden");
 
-                    if (editPopupOpen) {
-                        return;
-                    }
+                if (editPopupOpen || deletePopupOpen) {
+                    return;
+                }
 
                     const clickedInsidePanel = sidePanel.contains(e.target);
                     const clickedRow = e.target.closest(".vault-row");
@@ -120,7 +142,6 @@
                         sidePanel.classList.add("hidden");
                     }
             });
-
 
             async function loadEntries(site = "", username = "") {
                 const response = await fetch(
@@ -242,6 +263,7 @@
                 e.stopPropagation();
 
                 editPopup.classList.add("hidden");
+                deletePopup.classList.add("hidden");
                 editOverlay.classList.add("hidden");
             });
 
@@ -269,7 +291,36 @@
                 await refreshSidePanel(selectedEntryId);
                 await loadEntries(siteInput.value, usernameInput.value);
             });
-                        
+            
+            deleteEntryBtn.addEventListener("click", () => {
+                deleteEntryId.textContent = document.getElementById("entry-id").textContent;
+                deleteEntrySite.textContent = document.getElementById("entry-site").textContent;
+                deleteEntryUsername.textContent = document.getElementById("entry-username").textContent;
+                deleteEntryPassword.textContent = `Password: ${selectedPassword}`;
+
+                deletePopup.classList.remove("hidden");
+                editOverlay.classList.remove("hidden");
+            });
+
+            closeDeletePopup.addEventListener("click", (e) => {
+                e.stopPropagation();
+
+                deletePopup.classList.add("hidden");
+                editOverlay.classList.add("hidden");
+            });
+            
+            confirmDeleteEntryBtn.addEventListener("click", async () => {
+                await fetch(`/delete_entry/${selectedEntryId}`, {
+                    method: "POST"
+                });
+
+                deletePopup.classList.add("hidden");
+                editOverlay.classList.add("hidden");
+                sidePanel.classList.add("hidden");
+
+                await loadEntries(siteInput.value, usernameInput.value);
+            });
+
         });
     </script>
 </body>
