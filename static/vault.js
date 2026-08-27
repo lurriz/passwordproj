@@ -33,16 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch(`/get_entry/${entryId}`);
                 const entry = await response.json();
 
-                selectedPassword = entry.password;
+                selectedPassword = "";
 
                 document.getElementById("entry-id").textContent = `ID: ${entry.id}`;
                 document.getElementById("entry-site").textContent = `Site: ${entry.site}`;
                 document.getElementById("entry-username").textContent = `Username: ${entry.username}`;
                 document.getElementById("entry-password").textContent = "Password: Hidden";
 
-                revealPasswordBtn.textContent = "Reveal password";
+                revealPasswordBtn.textContent = "Show password";
                 sideMessage.textContent = "";
-}
+            }
 
             document.addEventListener("click", (e) => {
                 const editPopupOpen = !editPopup.classList.contains("hidden");
@@ -81,11 +81,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     row.dataset.site = entry.site;
                     row.dataset.username = entry.username;
 
-                    row.innerHTML = `
-                        <td>${entry.id}</td>
-                        <td>${entry.site}</td>
-                        <td>${entry.username}</td>
-                    `;
+                    const idCell = document.createElement("td");
+                    idCell.textContent = entry.id;
+
+                    const siteCell = document.createElement("td");
+                    siteCell.textContent = entry.site;
+
+                    const usernameCell = document.createElement("td");
+                    usernameCell.textContent = entry.username;
+
+                    row.appendChild(idCell);
+                    row.appendChild(siteCell);
+                    row.appendChild(usernameCell);
 
                     container.appendChild(row);
                 });
@@ -128,36 +135,93 @@ document.addEventListener("DOMContentLoaded", () => {
                 sidePanel.classList.remove("hidden");
             });
 
-            revealPasswordBtn.addEventListener("click", () => {
+            async function getPasswordWithPin() {
+                const pin = prompt("Enter PIN:");
+
+                if (!pin) {
+                    return null;
+                }
+
+                const response = await fetch(`/reveal_password/${selectedEntryId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ pin })
+                });
+
+                if (!response.ok) {
+                    sideMessage.textContent = "Invalid PIN";
+                    sideMessage.style.color = "red";
+                    return null;
+                }
+
+                const data = await response.json();
+                return data.password;
+            }
+
+            function isPasswordRevealed() {
+                const passwordText = document.getElementById("entry-password");
+
+                return passwordText.textContent !== "Password: Hidden";
+            }
+
+           revealPasswordBtn.addEventListener("click", async () => {
+                const passwordText = document.getElementById("entry-password");
+
+                if (passwordText.textContent !== "Password: Hidden") {
+                    passwordText.textContent = "Password: Hidden";
+                    revealPasswordBtn.textContent = "Show password";
+                    selectedPassword = "";
+                    return;
+                }
+
+                const password = await getPasswordWithPin();
+
+                if (!password) {
+                    return;
+                }
+
+                selectedPassword = password;
+                passwordText.textContent = `Password: ${selectedPassword}`;
+                revealPasswordBtn.textContent = "Hide password";
+                sideMessage.textContent = "";
+            });
+
+            copyButton.addEventListener("click", async () => {
                 const passwordText = document.getElementById("entry-password");
 
                 if (passwordText.textContent === "Password: Hidden") {
-                    passwordText.textContent = `Password: ${selectedPassword}`;
-                    revealPasswordBtn.textContent = "Hide password";
-                } else {
-                    passwordText.textContent = "Password: Hidden";
-                    revealPasswordBtn.textContent = "Show password";
-                }
-            });
+                    const password = await getPasswordWithPin();
 
-            copyButton.addEventListener("click", () => {
-                if (!selectedPassword.trim()) {
-                    sideMessage.textContent = "No password selected";
-                    sideMessage.style.color = "red";
-                    return;
+                    if (!password) {
+                        return;
+                    }
+
+                    selectedPassword = password;
                 }
-                
-                navigator.clipboard.writeText(selectedPassword);
+
+                await navigator.clipboard.writeText(selectedPassword);
 
                 sideMessage.textContent = "Password copied!";
                 sideMessage.style.color = "#00ff55";
 
                 setTimeout(() => {
-
+                    sideMessage.textContent = "";
                 }, 1000);
             });
 
-            editEntryBtn.addEventListener("click", () => {
+           editEntryBtn.addEventListener("click", async () => {
+                if (!isPasswordRevealed()) {
+                    const password = await getPasswordWithPin();
+
+                    if (!password) {
+                        return;
+                    }
+
+                    selectedPassword = password;
+                }
+
                 document.getElementById("edit-entry-id").textContent =
                     document.getElementById("entry-id").textContent;
 
@@ -213,7 +277,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 await loadEntries(siteInput.value, usernameInput.value);
             });
             
-            deleteEntryBtn.addEventListener("click", () => {
+            deleteEntryBtn.addEventListener("click", async () => {
+                if (!isPasswordRevealed()) {
+                    const password = await getPasswordWithPin();
+
+                    if (!password) {
+                        return;
+                    }
+
+                    selectedPassword = password;
+                }
+
                 deleteEntryId.textContent = document.getElementById("entry-id").textContent;
                 deleteEntrySite.textContent = document.getElementById("entry-site").textContent;
                 deleteEntryUsername.textContent = document.getElementById("entry-username").textContent;

@@ -21,7 +21,7 @@
                     const msg = document.createElement("div");
                     msg.textContent = "Password is empty!";
                     msg.style.position = "absolute";
-                    msg.style.top = "145px";
+                    msg.style.top = "195px";
                     msg.style.color = "red";
 
                     document.body.appendChild(msg);
@@ -37,7 +37,7 @@
                 const msg = document.createElement("div");
                 msg.textContent = "Copied!";
                 msg.style.position = "absolute";
-                msg.style.top = "145px";
+                msg.style.top = "195px";
                 msg.style.color = "green";
 
                 document.body.appendChild(msg);
