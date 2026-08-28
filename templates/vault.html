@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Vault</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
      <h1 class="header" id="vault-head">Password Vault</h1>
 
-    <nav class="sidebar">
-        <a href="/">⌂ Home</a>
-        <a class="active" href="/vault">▣ Vault</a>
-        <a href="/settings">⚙ Settings</a>
-        <a class="logout-link" href="/logout">⏻ Logout</a>
-    </nav>
+    {% set active_page = "vault" %}
+    {% include "_sidebar.html" %}
     
     <div class="input-group-vault">
         <input class="input" type="text" id="site" placeholder="site" autocomplete="off">
@@ -62,6 +60,8 @@
         <input class="input" type="text" id="password-edit" value="">
 
         <button class="btn" id="save-entry-change">Save</button>
+
+        <p id="edit-message" class="pin-message"></p>
     </div>
 
        <div id="delete-popup" class="delete-popup hidden">
@@ -74,9 +74,25 @@
         <p id="delete-entry-username"></p>
         <p id="delete-entry-password"></p>
 
-        <button class="btn" id="confirm-delete-entry">Yes</button>
+        <div class="button-group">
+            <button class="btn" id="confirm-delete-entry">Yes</button>
+            <button class="btn" id="cancel-delete-entry">No</button>
+        </div>
     </div>
         
+
+    <div id="pin-popup" class="pin-popup hidden">
+        <button id="close-pin-popup" class="side-panel-close">X</button>
+
+        <h2>Enter PIN</h2>
+
+        <input class="input" type="password" id="pin-input" placeholder="PIN" autocomplete="off">
+
+        <p id="pin-message" class="pin-message"></p>
+
+        <button class="btn" id="submit-pin">Unlock</button>
+    </div>
+
     <script src="{{ url_for('static', filename='vault.js') }}"></script>
 </body>
 </html> 

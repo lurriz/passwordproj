@@ -1,0 +1,13 @@
+{# Included by every signed-in page. Set active_page before including. #}
+<nav class="sidebar">
+    <a class="{% if active_page == 'home' %}active{% endif %}" href="/">⌂ Home</a>
+    <a class="{% if active_page == 'generator' %}active{% endif %}" href="/generator">✦ Generator</a>
+    <a class="{% if active_page == 'vault' %}active{% endif %}" href="/vault">▣ Vault</a>
+    <a class="{% if active_page == 'activity' %}active{% endif %}" href="/activity">◷ Activity</a>
+    <a class="{% if active_page == 'settings' %}active{% endif %}" href="/settings">⚙ Settings</a>
+
+    <form class="logout-form" method="POST" action="/logout">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="logout-link" type="submit">⏻ Logout</button>
+    </form>
+</nav>

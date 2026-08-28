@@ -3,82 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
 </head>
 <body>
-     <nav class="sidebar">
-        <a href="/">⌂ Home</a>
-        <a href="/vault">▣ Vault</a>
-        <a class="active" class="active" href="/settings">⚙ Settings</a>
-        <a class="logout-link" href="/logout">⏻ Logout</a>
-    </nav>
+    {% set active_page = "settings" %}
+    {% include "_sidebar.html" %}
 
 <main class="settings-page">
   <h1>Settings</h1>
 
   <section class="settings-card">
-    <h2>♙ Account</h2>
+    <h2>Account</h2>
 
     <div class="settings-row">
-      <label>Username</label>
-      <input type="text" value="testuser">
+      <label>Signed in as</label>
+      <span class="settings-value" id="current-username">{{ username }}</span>
     </div>
+
+    <div class="settings-row">
+      <label>Vault locks after</label>
+      <span class="settings-value">{{ auto_lock_minutes }} minutes idle</span>
+    </div>
+  </section>
+
+  <section class="settings-card">
+    <h2>Recovery</h2>
+
+    {% if not has_recovery %}
+    <p class="settings-note settings-warn">
+      This account has no recovery code. If you forget your password its vault
+      cannot be recovered. Save an email address below, then send yourself a code.
+    </p>
+    {% endif %}
+
+    {% if not smtp_ready %}
+    <p class="settings-note settings-warn">
+      Email is not configured on this server, so codes cannot be delivered.
+      Send one anyway and it will be shown here once instead.
+    </p>
+    {% endif %}
+
+    <p class="settings-note">
+      This address is where recovery codes are sent, so it decides who can take
+      the account over. Both actions below need your password.
+    </p>
+
+    {% if email and not email_verified %}
+    <p class="settings-note settings-warn">
+      {{ email }} has not been confirmed yet, so recovery codes will not be sent
+      to it. Save it again to get a fresh confirmation link.
+    </p>
+    {% endif %}
+
+    {% if pending_email %}
+    <p class="settings-note settings-warn">
+      Waiting on confirmation of {{ pending_email }}. Until that link is opened,
+      {{ email or "no address" }} stays in place.
+    </p>
+    {% endif %}
 
     <div class="settings-row">
       <label>Email</label>
-      <input type="email" value="testuser@example.com">
+      <input type="email" id="email" value="{{ email }}" autocomplete="email">
     </div>
+
+    <div class="settings-row">
+      <label>Your password</label>
+      <input type="password" id="recovery-password" autocomplete="current-password">
+    </div>
+
+    <div class="settings-row">
+      <label></label>
+      <button id="save-email">Save email</button>
+    </div>
+
+    <p class="settings-note">
+      Sending a new code replaces any previous one. The code is never stored -
+      only what it unlocks - so it cannot be shown to you again later.
+    </p>
+
+    <div class="settings-row">
+      <label></label>
+      <button id="send-recovery">Send me a new recovery code</button>
+    </div>
+
+    <p id="recovery-message" class="settings-message"></p>
+    <p id="recovery-code" class="recovery-code hidden"></p>
   </section>
 
   <section class="settings-card">
-    <h2>🔒 Security</h2>
+    <h2>Change password</h2>
+
+    <p class="settings-note">
+      Your vault key is wrapped with this password. Changing it re-wraps the key;
+      your entries are not re-encrypted and stay readable.
+    </p>
 
     <div class="settings-row">
-      <label>Change Password</label>
-      <button>Change Password</button>
+      <label>Current password</label>
+      <input type="password" id="password-current" autocomplete="current-password">
     </div>
 
     <div class="settings-row">
-      <label>Two-Factor Authentication</label>
-      <div class="toggle-row">
-        <span class="toggle off"></span>
-        <span>Disabled</span>
-      </div>
+      <label>New password</label>
+      <input type="password" id="password-new" autocomplete="new-password">
     </div>
+
+    <div class="settings-row">
+      <label>Confirm new password</label>
+      <input type="password" id="password-confirm" autocomplete="new-password">
+    </div>
+
+    <div class="settings-row">
+      <label></label>
+      <button id="save-password">Change password</button>
+    </div>
+
+    <p id="password-message" class="settings-message"></p>
   </section>
 
   <section class="settings-card">
-    <h2>☷ Preferences</h2>
+    <h2>Change reveal PIN</h2>
+
+    <p class="settings-note">
+      Confirmed with your password rather than your old PIN, so a forgotten PIN
+      is recoverable.
+    </p>
 
     <div class="settings-row">
-      <label>Dark Mode</label>
-      <div class="toggle-row">
-        <span class="toggle on"></span>
-        <span>Enabled</span>
-      </div>
+      <label>Your password</label>
+      <input type="password" id="pin-password" autocomplete="current-password">
     </div>
 
     <div class="settings-row">
-      <label>Auto-Lock Vault</label>
-      <select>
-        <option>15 minutes</option>
-        <option>30 minutes</option>
-        <option>1 hour</option>
-      </select>
+      <label>New PIN</label>
+      <input type="password" id="pin-new" autocomplete="off">
     </div>
+
+    <div class="settings-row">
+      <label>Confirm new PIN</label>
+      <input type="password" id="pin-confirm" autocomplete="off">
+    </div>
+
+    <div class="settings-row">
+      <label></label>
+      <button id="save-pin">Change PIN</button>
+    </div>
+
+    <p id="pin-message" class="settings-message"></p>
   </section>
-
-  <section class="settings-card">
-    <h2>⚠ Danger Zone</h2>
-
-    <div class="settings-row">
-      <label>Delete Account</label>
-      <button class="danger-btn">Delete Account</button>
-    </div>
-  </section>
-
-  <button class="save-btn">Save Changes</button>
 </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
 </body>
 </html>

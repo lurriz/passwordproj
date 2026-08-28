@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+
+# Secrets and data live in the parent directory, but never commit them if
+# they end up here.
+.env
+key.txt
+vault.db
+*.bak
+vault.db.*
+
+.venv/
+venv/
+
+.vscode/

@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
 <body>
-    <h1 class="header">Password Generator</h1>
+    <h1 class="header">PassMaker</h1>
 
     <form method="POST" class="input-group">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input class="input" type="text" name="username" placeholder="Username">
         <input class="input" type="password" name="password" placeholder="Password">
 
         <button class="btn" type="submit">Login</button>
     </form>
 
+    <a class="quiet-link" href="/forgot_password">Forgot your password?</a>
+
     {% if error %}
-        <p style="color: red;">{{ error }}</p>
+        <p class="notice-error">{{ error }}</p>
     {% endif %}
 </body>
 </html>

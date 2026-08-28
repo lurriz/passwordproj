@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>PassMaker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1 class="header">Generate Password</h1>
 
-     <nav class="sidebar">
-        <a class="active" href="/">⌂ Home</a>
-        <a href="/vault">▣ Vault</a>
-        <a href="/settings">⚙ Settings</a>
-        <a class="logout-link" href="/logout">⏻ Logout</a>
-    </nav>
+    {% set active_page = "generator" %}
+    {% include "_sidebar.html" %}
 
     <div class="button-group">
         <button class="btn" id="generate">Generate</button>
@@ -29,11 +27,11 @@
         <input class="input" type="text" id="username" placeholder="username">      
     </div>
     <div>
-        <input class="box" type="text" id="output" placeholder="password"> 
+        <input class="box" type="text" id="output" placeholder="password">
     </div>
 
-    <!--<div class="box" id="output"></div>-->
+    <p id="generator-message" class="generator-message"></p>
 
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="{{ url_for('static', filename='generator.js') }}"></script>
 </body>
 </html>

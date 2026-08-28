@@ -1,0 +1,50 @@
+/* Home. Loaded after base.css and styles.css. */
+
+.home-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    width: 100%;
+    max-width: 900px;
+    padding: 0 var(--space-5);
+}
+
+.home-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-5);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text);
+    text-decoration: none;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.home-card:hover {
+    background-color: var(--surface-raised);
+    border-color: var(--border-strong);
+}
+
+.home-card-icon {
+    /* Fixed box: the glyphs have different font metrics, so without this the
+       headings below them sit at slightly different heights. */
+    height: 24px;
+    margin-bottom: var(--space-4);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.home-card h2 {
+    margin: 0 0 var(--space-2);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.home-card p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}

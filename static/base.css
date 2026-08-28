@@ -1,0 +1,251 @@
+/* ---------------------------------------------------------------
+   Design tokens and shared shell. Linked first on every page; the
+   per-page stylesheet that follows only adds what is unique to it.
+   --------------------------------------------------------------- */
+
+:root {
+    /* Surfaces, darkest to lightest */
+    --bg: #0e1013;
+    --surface: #16191f;
+    --surface-raised: #1d212a;
+    --surface-hover: #242833;
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+
+    --text: #e7e9ec;
+    --text-muted: #949aa4;
+    --text-faint: #6b7078;
+
+    /* One accent, used sparingly: active nav, focus, key values */
+    --accent: #8b8cf0;
+    --accent-dim: rgba(139, 140, 240, 0.14);
+
+    --ok: #62c28a;
+    --warn: #d9a441;
+    --danger: #e0645f;
+
+    /* 4px rhythm - every margin and padding below is one of these */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+
+    --radius: 6px;
+    --radius-lg: 10px;
+
+    --font-ui: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    /* Reserved for secrets and identifiers, where character shapes matter */
+    --font-mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+
+    --sidebar-width: 220px;
+    --transition: 140ms ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Type ---------- */
+
+.header {
+    margin: var(--space-7) 0 var(--space-6);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-5) var(--space-3);
+    background-color: var(--surface);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.sidebar a:hover {
+    background-color: var(--surface-hover);
+    color: var(--text);
+}
+
+.sidebar .active {
+    background-color: var(--accent-dim);
+    color: var(--accent);
+}
+
+.logout-link {
+    margin-top: auto;
+}
+
+.sidebar .logout-link:hover {
+    color: var(--danger);
+}
+
+/* ---------- Controls ---------- */
+
+.btn,
+button {
+    padding: 10px var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.btn:hover,
+button:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--accent);
+}
+
+.btn:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.input,
+input,
+select {
+    padding: 10px var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.input::placeholder,
+input::placeholder {
+    color: var(--text-faint);
+}
+
+.input:focus,
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* Secrets and identifiers read better with fixed-width glyphs */
+input[type="password"],
+#output,
+.recovery-code {
+    font-family: var(--font-mono);
+}
+
+.button-group {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* ---------- Panels ---------- */
+
+.card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+}
+
+/* ---------- Recovery code, shown once ---------- */
+
+.recovery-code {
+    padding: var(--space-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background-color: var(--bg);
+    color: var(--accent);
+    font-size: 17px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    user-select: all;
+}
+
+/* ---------- Utility ---------- */
+
+/* A utility that must beat any component's own display value, whatever the
+   source order of the stylesheets. Every popup and the side panel are toggled
+   with this class from JS, so it losing a specificity tie means they render
+   permanently open. */
+.hidden {
+    display: none !important;
+}
+
+/* Logout is a POST so it cannot be triggered by a cross-site link, but it
+   still has to look like the nav item next to it. */
+.logout-form {
+    margin-top: auto;
+}
+
+.sidebar .logout-form .logout-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: none;
+    border-radius: var(--radius);
+    background: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar .logout-form .logout-link:hover {
+    background-color: var(--surface-hover);
+    border-color: transparent;
+    color: var(--danger);
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='activity.css') }}">
+</head>
+<body>
+    {% set active_page = "activity" %}
+    {% include "_sidebar.html" %}
+
+    <main class="activity-page">
+        <h1>Activity</h1>
+
+        <p class="activity-note">
+            The last {{ limit }} events on your account, newest first. Times are UTC.
+            Only your own account is shown.
+        </p>
+
+        {% if events %}
+        <div class="activity-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Event</th>
+                        <th>Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr {% if event.concerning %}class="activity-concerning"{% endif %}>
+                        <td class="activity-when">{{ event.at }}</td>
+                        <td>{{ event.label }}</td>
+                        <td class="activity-detail">{{ event.detail or "" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="activity-card activity-empty">
+            Nothing recorded yet. Signing in, changing a password or PIN, issuing a
+            recovery code and deleting an entry all show up here.
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>

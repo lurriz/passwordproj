@@ -1,214 +1,119 @@
-html,
-body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-    font-family: Consolas, monospace;
-}
+/* Generator and vault. Loaded after base.css. */
 
 body {
-    margin-left: 200px;
-    min-height: 100vh;
+    padding-left: var(--sidebar-width);
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(to bottom, #222, #3b3b3b);
-    color: white;
 }
 
-/* ---------- Header ---------- */
-
-.header {
-    color: #ffffff;
-    margin: 40px 0 30px;
-    font-size: 60px;
-}
-
-/* ---------- Sidebar ---------- */
-
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 200px;
-    height: 100%;
-    background: linear-gradient(to bottom, #181818, #111);
-    display: flex;
-    flex-direction: column;
-    padding-top: 30px;
-}
-
-.sidebar a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 15px 25px;
-}
-
-.sidebar a:hover,
-.sidebar .active {
-    background-color: #333;
-    border-radius: 8px;
-    margin: 0 15px;
-}
-
-.sidebar .logout-link:hover {
-  background-color: #333;
-  border-radius: 8px;
-  margin-left: 15px;
-  margin-right: 15px;
-  margin-top: auto;
-  margin-bottom: 40px;
-}
-
-.logout-link {
-    margin-top: auto;
-    margin-bottom: 40px;
-}
-
-/* ---------- Inputs ---------- */
+/* ---------- Generator ---------- */
 
 .input-group {
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
-    width: 320px;
-}
-
-.input-group-vault {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.input {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    height: auto;
-    text-align: center;
-    border-radius: 6px;
-    border: 1px solid #444;
-    padding: 12px;
-    background-color: #2b2b2b;
-    color: white;
-    font-family: Consolas, monospace;
-    font-weight: bold;
-}
-
-/* ---------- Buttons ---------- */
-
-.btn {
-    padding: 12px 24px;
-    font-size: 1rem;
-    background-color: #333;
-    color: white;
-    border: 1px solid #444;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-    margin-bottom: 10px;
-    font-family: Consolas, monospace;
-    font-weight: bold;
-}
-
-.btn:hover {
-    background-color: #555;
-}
-
-.btn:active {
-    background-color: #6b648a;
-    transform: scale(0.96);
+    gap: var(--space-2);
+    width: 100%;
+    max-width: 360px;
 }
 
 .button-group {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-4);
 }
 
-/* ---------- Password output ---------- */
-
-.box {
-    margin-top: 10px;
-    padding: 15px;
-    min-width: 320px;
-    min-height: 40px;
-    background-color: #2b2b2b;
-    color: #ffffff;
-    border: 1px solid #444;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 1.2rem;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
-    font-family: Consolas, monospace;
-    font-weight: bold;
-}
-
+.box,
 #output {
+    /* Explicit, not 100%: the wrapping div is shrink-to-fit, so a percentage
+       here would resolve against nothing and the field would be too narrow. */
+    width: 360px;
+    max-width: 100%;
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 15px;
     text-align: center;
 }
 
-/* ---------- Vault table ---------- */
+/* ---------- Vault ---------- */
+
+.input-group-vault {
+    display: flex;
+    gap: var(--space-2);
+    width: 100%;
+    max-width: 900px;
+    padding: 0 var(--space-5);
+}
+
+.input-group-vault .input {
+    flex: 1;
+}
 
 .table-wrapper {
-    max-height: 700px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 620px;
+    margin: var(--space-5) 0;
     overflow-y: auto;
-    width: 80%;
-    margin-top: 20px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: rgba(25, 25, 25, 0.75);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
 }
 
 table {
     width: 100%;
     table-layout: fixed;
-    border-collapse: collapse;
-    background-color: transparent;
-    color: white;
+    /* Separate rather than collapse: a sticky th only paints its own borders
+       when the borders belong to the cell. Under collapse the table paints
+       them, and a sliver of the scrolling row shows through the header. */
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--text);
 }
 
 th {
     position: sticky;
     top: 0;
-    background-color: #181818;
-    color: white;
     z-index: 1;
-    font-weight: bold;
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--surface-raised);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-align: left;
+    /* Both lines belong to the header so they travel with it: the first
+       extends the header colour above itself, so a fractional scroll position
+       cannot leave a hairline of a row showing up there; the second is the
+       header's own bottom rule, which a border on the row below could not be. */
+    box-shadow: 0 -4px 0 var(--surface-raised), 0 1px 0 var(--border);
 }
 
-th,
 td {
-    padding: 12px;
-    border-top: 1px solid #333;
-    border-left: 1px solid #333;
-    border-right: 1px solid #333;
-    text-align: center;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
     word-break: break-all;
 }
 
-th:nth-child(1),
-td:nth-child(1) {
-    width: 10px;
+th:first-child,
+td:first-child {
+    width: 64px;
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
 }
 
-th:nth-child(2),
 td:nth-child(2) {
-    width: 60px;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-    width: 60px;
+    width: 40%;
 }
 
 .vault-row {
     cursor: pointer;
+    transition: background-color var(--transition);
 }
 
 .vault-row:hover {
-    background-color: #333;
+    background-color: var(--surface-hover);
 }
 
 /* ---------- Side panel ---------- */
@@ -217,90 +122,137 @@ td:nth-child(3) {
     position: fixed;
     top: 0;
     right: 0;
-    width: 350px;
-    height: 100vh;
-    background: rgba(25, 25, 25, 0.95);
-    color: white;
-    padding: 24px;
-    border-left: 1px solid #333;
-    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.7);
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 380px;
+    height: 100vh;
+    padding: var(--space-6) var(--space-5);
+    background-color: var(--surface);
+    border-left: 1px solid var(--border);
     transform: translateX(0);
-    transition: transform 0.3s ease;
+    transition: transform 220ms ease;
 }
 
-.side-panel.hidden {
-    transform: translateX(100%);
+/* .hidden in base.css takes it out of flow entirely. Sliding it off-screen
+   instead would leave it laid out past the right edge and force a horizontal
+   scrollbar, now that nothing clips the body. */
+
+.side-panel h2 {
+    margin: 0 0 var(--space-2);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.side-panel p {
+    margin: 0;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+#entry-password {
+    font-family: var(--font-mono);
+    color: var(--accent);
+}
+
+.side-panel .btn {
+    margin-top: var(--space-1);
 }
 
 .side-panel-close,
 .delete-popup-close {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #333;
-    color: white;
-    border: 1px solid #444;
-    border-radius: 6px;
-    cursor: pointer;
-    padding: 8px 12px;
-    font-family: Consolas, monospace;
-    font-weight: bold;
+    top: var(--space-4);
+    right: var(--space-4);
+    padding: var(--space-1) var(--space-3);
+    color: var(--text-muted);
+    line-height: 1.2;
 }
 
-.side-panel-close:hover,
-.delete-popup-close:hover {
-    background-color: #555;
-}
-
-.side-message {
-    margin-top: 12px;
+.side-message,
+.pin-message {
     min-height: 20px;
-    color: #8b6cff;
-    font-size: 0.95rem;
+    margin: var(--space-2) 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
 }
 
-/* ---------- Edit / delete overlays ---------- */
+/* ---------- Modals ---------- */
 
 .edit-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
     z-index: 19;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .edit-popup,
-.delete-popup {
+.delete-popup,
+.pin-popup {
     position: fixed;
     inset: 0;
-    margin: auto;
-    width: 450px;
-    height: fit-content;
-    background: rgba(25, 25, 25, 0.95);
-    color: white;
-    padding: 24px;
-    border: 1px solid #333;
-    border-radius: 8px;
     z-index: 20;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    margin: auto;
+    width: min(440px, calc(100vw - var(--space-6)));
+    height: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
 }
 
 .edit-popup h2,
-.delete-popup h2 {
-    margin: 0 0 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #3d3d3d;
+.delete-popup h2,
+.pin-popup h2 {
+    margin: 0 0 var(--space-2);
+    padding-right: var(--space-6);
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.edit-panel {
-    z-index: 20;
+.delete-popup p,
+.edit-popup p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    word-break: break-all;
 }
 
-/* ---------- Utility ---------- */
+.delete-popup .button-group {
+    margin-top: var(--space-2);
+}
 
-.hidden {
-    display: none;
+.delete-popup .button-group .btn {
+    flex: 1;
+}
+
+#confirm-delete-entry:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+/* Sits in the flow under the password field rather than floating over the
+   page, so it cannot cover anything else. */
+.generator-message {
+    min-height: 20px;
+    margin: var(--space-3) 0 0;
+    font-size: 13px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.generator-message[data-kind="ok"] {
+    color: var(--ok);
+}
+
+.generator-message[data-kind="error"] {
+    color: var(--danger);
 }

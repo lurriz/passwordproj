@@ -1,0 +1,81 @@
+/* Activity. Loaded after base.css. */
+
+.activity-page {
+    max-width: 900px;
+    margin-left: var(--sidebar-width);
+    padding: 0 var(--space-5) var(--space-7);
+}
+
+.activity-page h1 {
+    margin: var(--space-7) 0 var(--space-3);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.activity-note {
+    margin: 0 0 var(--space-5);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-faint);
+}
+
+.activity-card {
+    overflow-x: auto;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.activity-card table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.activity-card th {
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--surface-raised);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.activity-card td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    vertical-align: top;
+}
+
+.activity-card tr:last-child td {
+    border-bottom: none;
+}
+
+.activity-when {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.activity-detail {
+    color: var(--text-muted);
+    word-break: break-all;
+}
+
+/* Failed sign-ins and lockouts are the rows worth spotting at a glance. */
+.activity-concerning td {
+    color: var(--warn);
+}
+
+.activity-empty {
+    padding: var(--space-5);
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}

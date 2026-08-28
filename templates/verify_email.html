@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm address</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    {% if ok %}
+        <h1 class="header">Address confirmed</h1>
+        <p class="notice-ok">
+            {{ email }} can now receive recovery codes for your vault.
+        </p>
+    {% else %}
+        <h1 class="header">Link not valid</h1>
+        <p class="notice-error">
+            That confirmation link is wrong, already used, or has expired.
+            Request a new one from Settings.
+        </p>
+    {% endif %}
+
+    <a class="quiet-link" href="/login">Back to login</a>
+</body>
+</html>
